@@ -484,10 +484,10 @@ function renderHistoriKeuangan() {
         const displayTanggal = k.tanggal ? k.tanggal.split('T')[0] : '';
 
         const html = `
-            <div class="flex items-center gap-3 w-full">
-                <input type="checkbox" value="${k.id}" class="w-4 h-4 rounded border-slate-300 text-${shadowColor}-500 focus:ring-${shadowColor}-500 cursor-pointer shrink-0" onchange="toggleSelectKeuangan('${k.id}')" ${selectedKeuanganIds.has(k.id) ? 'checked' : ''}>
-                <div class="flex-1 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-${shadowColor}-500/50 border-l-4 ${borderColor} flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm hover:shadow-lg hover:shadow-${shadowColor}-500/30 hover:-translate-y-1 transition-all duration-300 relative">
-                    <div class="flex items-center gap-4">
+            <div class="flex items-center w-full">
+                <div class="w-full bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-${shadowColor}-500/50 border-l-4 ${borderColor} flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm hover:shadow-lg hover:shadow-${shadowColor}-500/30 hover:-translate-y-1 transition-all duration-300 relative">
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <input type="checkbox" value="${k.id}" class="w-4 h-4 rounded border-slate-300 text-${shadowColor}-500 focus:ring-${shadowColor}-500 cursor-pointer shrink-0" onchange="toggleSelectKeuangan('${k.id}')" ${selectedKeuanganIds.has(k.id) ? 'checked' : ''}>
                         <div class="px-3 h-10 rounded-full flex items-center justify-center gap-2 ${colorClass}">
                             <i class="fa-solid ${icon}"></i>
                             <span class="text-xs font-bold uppercase tracking-wider">${k.jenis}</span>
@@ -786,12 +786,12 @@ function renderHistoriHutang() {
         const displayTanggal = h.tanggal ? h.tanggal.split('T')[0] : '';
 
         const html = `
-            <div class="flex items-center gap-3 w-full">
-                <input type="checkbox" value="${h.id}" class="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 cursor-pointer shrink-0" onchange="toggleSelectHutang('${h.id}')" ${selectedHutangIds.has(h.id) ? 'checked' : ''}>
-                <div class="flex-1 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-${shadowColor}-500/50 border-l-4 ${borderColor} flex flex-col md:flex-row justify-between gap-3 shadow-sm hover:shadow-lg hover:shadow-${shadowColor}-500/30 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+            <div class="flex items-center w-full">
+                <div class="w-full bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-${shadowColor}-500/50 border-l-4 ${borderColor} flex flex-col md:flex-row justify-between gap-3 shadow-sm hover:shadow-lg hover:shadow-${shadowColor}-500/30 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
                     ${isLunas ? '<div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] px-2 py-1 rounded-bl-lg font-bold">LUNAS</div>' : ''}
                     
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 md:gap-4">
+                        <input type="checkbox" value="${h.id}" class="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 cursor-pointer shrink-0" onchange="toggleSelectHutang('${h.id}')" ${selectedHutangIds.has(h.id) ? 'checked' : ''}>
                         <div class="w-12 h-12 rounded-full flex items-center justify-center ${isLunas ? 'bg-emerald-100 text-emerald-500 dark:bg-emerald-900/30' : 'bg-blue-100 text-blue-500 dark:bg-blue-900/30'}">
                             <i class="fa-solid fa-user"></i>
                         </div>

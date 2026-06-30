@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -91,7 +91,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 text-center font-medium">Aplikasi Pencatatan Keuangan</p>
             </div>
 
-            <div class="flex flex-row md:flex-col w-full flex-1 md:flex-none justify-around md:justify-start md:gap-2 px-1 md:px-0">
+            <div class="flex flex-row md:flex-col flex-1 md:flex-none justify-around md:justify-start md:gap-2 px-1 md:px-0">
                 <!-- Nav Tab: Keuangan -->
                 <button onclick="switchTab('keuangan')" id="nav-keuangan" class="flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all font-bold text-white bg-primary shadow-lg shadow-primary/30 transform scale-105 border border-primary">
                     <i class="fa-solid fa-chart-pie text-xl md:mr-3"></i>
@@ -107,7 +107,7 @@
 
             <div class="hidden md:block flex-1"></div>
 
-            <div class="flex flex-row md:flex-col items-center justify-center md:justify-start md:gap-2 h-full md:h-auto px-1 md:px-0">
+            <div class="flex flex-row md:flex-col flex-1 md:flex-none items-center justify-around md:justify-start md:gap-2 h-full md:h-auto px-1 md:px-0">
                 <!-- Theme Toggle -->
                 <button onclick="toggleTheme()" id="btn-theme" class="flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 md:w-full border-l border-slate-200 dark:border-slate-700 md:border-none">
                     <i class="fa-solid fa-moon text-xl md:mr-3" id="theme-icon"></i>
@@ -124,7 +124,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="p-4 md:p-8 max-w-7xl mx-auto">
+    <main class="p-3 md:p-8 max-w-7xl mx-auto pb-24 md:pb-8">
         
         <!-- =================== KEUANGAN TAB =================== -->
         <section id="tab-keuangan" class="block animate-fade-in">
@@ -138,7 +138,7 @@
             <!-- Cards Info Keuangan -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Saldo Terkini -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-100 transition-opacity">
                         <i class="fa-solid fa-wallet text-6xl text-primary"></i>
                     </div>
@@ -146,7 +146,7 @@
                     <h3 class="text-3xl font-bold text-dark dark:text-white" id="k-saldo-terkini">Rp 0</h3>
                 </div>
                 <!-- Saldo Tunai -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-100 transition-opacity">
                         <i class="fa-solid fa-money-bill-wave text-6xl text-emerald-500"></i>
                     </div>
@@ -154,7 +154,7 @@
                     <h3 class="text-3xl font-bold text-dark dark:text-white" id="k-saldo-tunai">Rp 0</h3>
                 </div>
                 <!-- Saldo Non Tunai -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-100 transition-opacity">
                         <i class="fa-solid fa-credit-card text-6xl text-blue-500"></i>
                     </div>
@@ -165,7 +165,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <!-- Pemasukan Bulanan -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-100 transition-opacity">
                         <i class="fa-solid fa-arrow-trend-up text-6xl text-emerald-500"></i>
                     </div>
@@ -173,7 +173,7 @@
                     <h3 class="text-3xl font-bold text-emerald-600" id="k-masuk-bulan">Rp 0</h3>
                 </div>
                 <!-- Pengeluaran Bulanan -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-100 transition-opacity">
                         <i class="fa-solid fa-arrow-trend-down text-6xl text-rose-500"></i>
                     </div>
@@ -184,13 +184,13 @@
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700">
                     <h4 class="font-semibold mb-4 text-dark dark:text-white"><i class="fa-solid fa-chart-line text-emerald-500 mr-2"></i> <span id="label-chart-masuk">Grafik Pemasukan</span></h4>
                     <div class="relative h-64 w-full">
                         <canvas id="chartPemasukan"></canvas>
                     </div>
                 </div>
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700">
                     <h4 class="font-semibold mb-4 text-dark dark:text-white"><i class="fa-solid fa-chart-line text-rose-500 mr-2"></i> <span id="label-chart-keluar">Grafik Pengeluaran</span></h4>
                     <div class="relative h-64 w-full">
                         <canvas id="chartPengeluaran"></canvas>
@@ -200,7 +200,7 @@
 
             <div class="flex flex-col gap-6 mb-8">
                 <!-- Form Penginputan Keuangan -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700">
                     <h4 class="font-bold text-lg mb-4 dark:text-white">Input Keuangan</h4>
                     <form id="form-keuangan" class="space-y-4">
                         <input type="hidden" id="fk-id" value="">
@@ -255,47 +255,49 @@
                 </div>
 
                 <!-- Histori Keuangan -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 flex flex-col h-[600px]">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 flex flex-col h-[600px]">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
                         <h4 class="font-bold text-lg dark:text-white">Histori Keuangan</h4>
                         
-                        <div class="flex flex-wrap items-center gap-2">
+                        <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-2 w-full md:w-auto">
                             <!-- Filters -->
-                            <select id="filter-k-waktu" class="text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
+                            <select id="filter-k-waktu" class="w-full md:w-auto col-span-1 text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
                                 <option value="semua">Semua Waktu</option>
                                 <option value="terbaru">Terbaru</option>
                                 <option value="terlama">Terlama</option>
                             </select>
                             
-                            <select id="filter-k-jenis" class="text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
+                            <select id="filter-k-jenis" class="w-full md:w-auto col-span-1 text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
                                 <option value="semua">Semua Jenis</option>
                                 <option value="Pemasukan">Pemasukan</option>
                                 <option value="Pengeluaran">Pengeluaran</option>
                             </select>
 
-                            <select id="filter-k-kategori" class="text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
+                            <select id="filter-k-kategori" class="w-full md:w-auto col-span-2 md:col-span-1 text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriKeuangan()">
                                 <option value="semua">Semua Kategori</option>
                                 <!-- Populated dynamically -->
                             </select>
 
-                            <div class="relative">
+                            <div class="relative w-full md:w-auto col-span-2 md:col-span-1">
                                 <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="text" id="search-keuangan" placeholder="Cari..." class="text-sm pl-8 pr-3 py-1.5 w-32 md:w-40 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:w-48 transition-all dark:text-slate-200" onkeyup="renderHistoriKeuangan()">
+                                <input type="text" id="search-keuangan" placeholder="Cari..." class="text-sm pl-8 pr-3 py-1.5 w-full md:w-40 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none md:focus:w-48 transition-all dark:text-slate-200" onkeyup="renderHistoriKeuangan()">
                             </div>
                         </div>
                     </div>
 
                     <!-- Download Section -->
-                    <div class="flex items-center flex-wrap gap-2 mb-4 bg-primary/5 p-3 rounded-lg border border-primary/10 dark:bg-slate-900/50 dark:border-slate-700">
-                        <span class="text-sm font-medium text-primary dark:text-blue-400">Download Histori (Max 1 Bln):</span>
-                        <input type="date" id="dl-k-start" class="text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
-                        <span class="text-sm text-slate-500">s/d</span>
-                        <input type="date" id="dl-k-end" class="text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
-                        <div class="flex gap-2 ml-auto w-full md:w-auto justify-end">
-                            <button onclick="downloadEStatement()" class="text-sm bg-primary text-white border border-primary px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-primary/30 font-medium whitespace-nowrap">
+                    <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4 bg-primary/5 p-3 rounded-lg border border-primary/10 dark:bg-slate-900/50 dark:border-slate-700">
+                        <span class="text-sm font-medium text-primary dark:text-blue-400 whitespace-nowrap">Download Histori (Max 1 Bln):</span>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <input type="date" id="dl-k-start" class="flex-1 md:flex-none text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                            <span class="text-sm text-slate-500">s/d</span>
+                            <input type="date" id="dl-k-end" class="flex-1 md:flex-none text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2 ml-auto w-full md:w-auto justify-end">
+                            <button onclick="downloadEStatement()" class="text-sm w-full sm:w-auto bg-primary text-white border border-primary px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-primary/30 font-medium whitespace-nowrap">
                                 <i class="fa-solid fa-bolt text-yellow-300 mr-1"></i> E-Statement Bulan Ini
                             </button>
-                            <button onclick="downloadKeuangan()" class="text-sm bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700 whitespace-nowrap">
+                            <button onclick="downloadKeuangan()" class="text-sm w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700 whitespace-nowrap">
                                 <i class="fa-solid fa-download text-primary mr-1"></i> Kustom PDF
                             </button>
                         </div>
@@ -332,21 +334,21 @@
 
             <!-- Cards Info Hutang -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute -right-4 -bottom-4 p-4 opacity-100 transition-opacity transform group-hover:scale-110">
                         <i class="fa-solid fa-coins text-7xl text-blue-500"></i>
                     </div>
                     <p class="text-sm text-black dark:text-white font-medium mb-1">Total Hutang (Di-hutangin)</p>
                     <h3 class="text-3xl font-bold text-dark dark:text-white" id="h-total-hutang">Rp 0</h3>
                 </div>
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute -right-4 -bottom-4 p-4 opacity-100 transition-opacity transform group-hover:scale-110">
                         <i class="fa-solid fa-users text-7xl text-blue-500"></i>
                     </div>
                     <p class="text-sm text-black dark:text-white font-medium mb-1">Total Peminjam</p>
                     <h3 class="text-3xl font-bold text-dark dark:text-white" id="h-total-orang">0 Orang</h3>
                 </div>
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 relative overflow-hidden group">
                     <div class="absolute -right-4 -bottom-4 p-4 opacity-100 transition-opacity transform group-hover:scale-110">
                         <i class="fa-solid fa-user-clock text-7xl text-rose-500"></i>
                     </div>
@@ -357,7 +359,7 @@
 
             <div class="flex flex-col gap-6 mb-8">
                 <!-- Form Penginputan Hutang -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 h-fit">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 h-fit">
                     <h4 class="font-bold text-lg mb-4 dark:text-white">Input Data Hutang Baru</h4>
                     <p class="text-xs text-rose-500 mb-4 bg-rose-50 p-2 rounded border border-rose-100">
                         <i class="fa-solid fa-circle-info mr-1"></i> Menambahkan hutang akan mengurangi saldo Anda.
@@ -404,38 +406,40 @@
                 </div>
 
                 <!-- Histori Hutang -->
-                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-6 rounded-3xl border border-white/50 dark:border-slate-700 flex flex-col h-[700px]">
+                <div class="glass-card bg-white/70 dark:bg-slate-800/80 p-3 md:p-6 rounded-3xl border border-white/50 dark:border-slate-700 flex flex-col h-[700px]">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
                         <h4 class="font-bold text-lg dark:text-white">Daftar Hutang</h4>
                         
-                        <div class="flex flex-wrap items-center gap-2">
+                        <div class="grid grid-cols-2 md:flex md:flex-wrap items-center gap-2 w-full md:w-auto">
                             <!-- Filters -->
-                            <select id="filter-h-waktu" class="text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriHutang()">
+                            <select id="filter-h-waktu" class="w-full md:w-auto col-span-1 text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriHutang()">
                                 <option value="semua">Semua Waktu</option>
                                 <option value="terbaru">Terbaru</option>
                                 <option value="terlama">Terlama</option>
                             </select>
                             
-                            <select id="filter-h-jenis" class="text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriHutang()">
+                            <select id="filter-h-jenis" class="w-full md:w-auto col-span-1 text-sm px-3 py-1.5 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none dark:text-slate-200" onchange="renderHistoriHutang()">
                                 <option value="semua">Semua Status</option>
                                 <option value="Belum Lunas">Belum Lunas</option>
                                 <option value="Lunas">Lunas</option>
                             </select>
 
-                            <div class="relative">
+                            <div class="relative w-full md:w-auto col-span-2 md:col-span-1">
                                 <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
-                                <input type="text" id="search-hutang" placeholder="Cari nama..." class="text-sm pl-8 pr-3 py-1.5 w-32 md:w-48 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:w-56 transition-all dark:text-slate-200" onkeyup="renderHistoriHutang()">
+                                <input type="text" id="search-hutang" placeholder="Cari nama..." class="text-sm pl-8 pr-3 py-1.5 w-full md:w-48 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg outline-none md:focus:w-56 transition-all dark:text-slate-200" onkeyup="renderHistoriHutang()">
                             </div>
                         </div>
                     </div>
 
                     <!-- Download Section -->
-                    <div class="flex items-center gap-2 mb-4 bg-blue-500/5 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-500/20 dark:border-blue-800/50">
-                        <span class="text-sm font-medium text-blue-600 dark:text-blue-400">Download (Max 1 Bln):</span>
-                        <input type="date" id="dl-h-start" class="text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
-                        <span class="text-sm text-slate-500">s/d</span>
-                        <input type="date" id="dl-h-end" class="text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
-                        <button onclick="downloadHutang()" class="ml-auto text-sm bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700">
+                    <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4 bg-blue-500/5 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-500/20 dark:border-blue-800/50">
+                        <span class="text-sm font-medium text-blue-600 dark:text-blue-400 whitespace-nowrap">Download (Max 1 Bln):</span>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <input type="date" id="dl-h-start" class="flex-1 md:flex-none text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                            <span class="text-sm text-slate-500">s/d</span>
+                            <input type="date" id="dl-h-end" class="flex-1 md:flex-none text-sm px-2 py-1 border rounded bg-white outline-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200">
+                        </div>
+                        <button onclick="downloadHutang()" class="w-full md:w-auto ml-auto text-sm bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-all shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700">
                             <i class="fa-solid fa-download text-blue-500 mr-1"></i> Unduh PDF
                         </button>
                     </div>
