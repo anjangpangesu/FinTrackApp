@@ -3,7 +3,7 @@ let state = {
     hutang: [],
     categories: {
         Pemasukan: ['Gaji', 'Keuntungan', 'Bonus', 'Lainnya'],
-        Pengeluaran: ['Beli Makanan / Minuman', 'Langganan Aplikasi', 'Games', 'Liburan / Jalan-jalan', 'Sedekah', 'Kerugian', 'Lainnya']
+        Pengeluaran: ['Beli Makanan / Minuman', 'Pulsa / Paket Data', 'Belanja Online', 'Kebutuhan Peliharaan', 'Langganan Aplikasi', 'Games', 'Liburan / Jalan-jalan', 'Sedekah', 'Kerugian', 'Keperluan Lainnya']
     }
 };
 
