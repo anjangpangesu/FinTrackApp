@@ -351,6 +351,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
         nominal: parseFloat(document.getElementById('fk-nominal').value),
         metode: document.getElementById('fk-metode').value,
         kategori: document.getElementById('fk-kategori').value,
+        keterangan: document.getElementById('fk-keterangan').value,
         tanggal: document.getElementById('fk-tanggal').value,
         waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
     };
@@ -390,6 +391,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
 function resetFormKeuangan() {
     document.getElementById('fk-id').value = '';
     document.getElementById('fk-nominal').value = '';
+    document.getElementById('fk-keterangan').value = '';
     document.getElementById('fk-tanggal').value = new Date().toISOString().split('T')[0];
     document.querySelector('input[name="fk-jenis"][value="Pemasukan"]').checked = true;
     updateKategoriOptions();
@@ -409,6 +411,7 @@ window.editKeuangan = (id) => {
     document.getElementById('fk-nominal').value = item.nominal;
     document.getElementById('fk-metode').value = item.metode;
     document.getElementById('fk-kategori').value = item.kategori;
+    document.getElementById('fk-keterangan').value = item.keterangan || '';
     document.getElementById('fk-tanggal').value = item.tanggal;
 
     document.getElementById('fk-submit-btn').innerHTML = '<i class="fa-solid fa-save mr-1"></i> Simpan Perubahan';
@@ -495,6 +498,7 @@ function renderHistoriKeuangan() {
                         <div>
                             <h5 class="font-bold text-slate-800 dark:text-white">${k.kategori}</h5>
                             <p class="text-xs text-slate-500 dark:text-slate-400">${displayTanggal} ${k.waktu ? '• ' + k.waktu : ''} • ${k.metode}</p>
+                            ${k.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 italic">"${k.keterangan}"</p>` : ''}
                         </div>
                     </div>
                     <div class="flex items-center justify-between md:flex-col md:items-end gap-2 mt-2 md:mt-0">
@@ -729,6 +733,7 @@ window.submitBayarHutang = async(e) => {
                 nominal: payAmount,
                 metode: payload.metode,
                 kategori: 'Pembayaran Hutang: ' + state.hutang[idx].nama,
+                keterangan: 'Pembayaran hutang otomatis',
                 tanggal: payload.tanggal,
                 waktu: payload.waktu
             });
