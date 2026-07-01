@@ -160,6 +160,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('login-screen').classList.add('hidden');
         loadData();
     }
+
+    // Allow Enter key to trigger login
+    document.getElementById('login-email').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('login-password').focus();
+        }
+    });
+    
+    document.getElementById('login-password').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.querySelector('#form-login button[type="submit"]').click();
+        }
+    });
 });
 
 function switchTab(tab) {
@@ -890,22 +905,10 @@ function generatePDF(options) {
     
     currentY += 15;
 
-    // D. Bagian Kesimpulan Grafik
-    if (charts && charts.length > 0) {
-        if (currentY > doc.internal.pageSize.getHeight() - 80) {
-            doc.addPage();
-            currentY = 20;
-        }
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "bold");
-        doc.text("Kesimpulan Grafik Bulanan", pageWidth / 2, currentY, { align: 'center' });
-        currentY += 10;
-        
-        const chartWidth = 85;
-        const chartHeight = 50;
-        if (charts[0]) doc.addImage(charts[0], 'PNG', 15, currentY, chartWidth, chartHeight);
-        if (charts[1]) doc.addImage(charts[1], 'PNG', 110, currentY, chartWidth, chartHeight);
-    }
+    // D. Bagian Kesimpulan Grafik (Dihapus)
+    // if (charts && charts.length > 0) {
+    //     ...
+    // }
     
     // Draw borders and footers on all pages
     const pageCount = doc.internal.getNumberOfPages();
@@ -991,30 +994,6 @@ window.downloadKeuangan = () => {
         title: "Laporan Keuangan Bulanan",
         startStr, endStr, head, body, summary, charts
     });
-}
-
-window.downloadEStatement = () => {
-    const now = new Date();
-    // Start of the current month
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-    // End of the current month
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-    const fmt = (d) => {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
-    };
-
-    // Automatically set the date inputs
-    const startInput = document.getElementById('dl-k-start');
-    const endInput = document.getElementById('dl-k-end');
-    if (startInput) startInput.value = fmt(firstDay);
-    if (endInput) endInput.value = fmt(lastDay);
-
-    // Call the existing download logic which reads from those inputs
-    window.downloadKeuangan();
 }
 
 window.downloadHutang = () => {
