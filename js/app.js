@@ -215,8 +215,8 @@ async function loadData() {
                 }
                 return item;
             });
-            state.keuangan = fixDate(res.keuangan || []).reverse();
-            state.hutang = fixDate(res.hutang || []).reverse();
+            state.keuangan = fixDate(res.keuangan || []);
+            state.hutang = fixDate(res.hutang || []);
         } else {
             console.warn(res.message);
             // Fallback to empty if failed
@@ -385,7 +385,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
             // optimistic update
             const tempId = 'temp-' + Date.now();
             payload.id = tempId;
-            state.keuangan.unshift(payload);
+            state.keuangan.push(payload);
 
             const res = await api.addKeuangan(payload);
             if (res.status === 'success' && res.id) {
@@ -481,13 +481,7 @@ function renderHistoriKeuangan() {
     }
 
     // Sort Waktu
-    filtered.sort((a, b) => {
-        let dateDiff = new Date(b.tanggal) - new Date(a.tanggal);
-        if (dateDiff !== 0) return dateDiff;
-        let timeA = a.waktu || '';
-        let timeB = b.waktu || '';
-        return timeB.localeCompare(timeA);
-    }); // Terbaru by default
+    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); // Terbaru by default
     if (filterWaktu === 'terlama') {
         filtered.reverse();
     }
@@ -637,7 +631,7 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
             payload.id = tempId;
             payload.sisaHutang = payload.hutangAwal;
             payload.status = "Belum Lunas";
-            state.hutang.unshift(payload);
+            state.hutang.push(payload);
 
             const res = await api.addHutang(payload);
             if (res.status === 'success' && res.id) {
@@ -748,7 +742,7 @@ window.submitBayarHutang = async(e) => {
             if (newSisa <= 0) state.hutang[idx].status = "Lunas";
 
             // Also optimistic add to keuangan
-            state.keuangan.unshift({
+            state.keuangan.push({
                 id: 'temp-k-' + Date.now(),
                 jenis: 'Pemasukan',
                 nominal: payAmount,
@@ -795,13 +789,7 @@ function renderHistoriHutang() {
     }
 
     // Sort Waktu
-    filtered.sort((a, b) => {
-        let dateDiff = new Date(b.tanggal) - new Date(a.tanggal);
-        if (dateDiff !== 0) return dateDiff;
-        let timeA = a.waktu || '';
-        let timeB = b.waktu || '';
-        return timeB.localeCompare(timeA);
-    });
+    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
     if (filterWaktu === 'terlama') {
         filtered.reverse();
     }
