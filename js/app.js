@@ -385,7 +385,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
             // optimistic update
             const tempId = 'temp-' + Date.now();
             payload.id = tempId;
-            state.keuangan.push(payload);
+            state.keuangan.unshift(payload);
 
             const res = await api.addKeuangan(payload);
             if (res.status === 'success' && res.id) {
@@ -481,7 +481,13 @@ function renderHistoriKeuangan() {
     }
 
     // Sort Waktu
-    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal)); // Terbaru by default
+    filtered.sort((a, b) => {
+        const diff = new Date(b.tanggal) - new Date(a.tanggal);
+        if (diff !== 0) return diff;
+        const timeA = a.waktu || '00:00';
+        const timeB = b.waktu || '00:00';
+        return timeB.localeCompare(timeA);
+    }); // Terbaru by default
     if (filterWaktu === 'terlama') {
         filtered.reverse();
     }
@@ -631,7 +637,7 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
             payload.id = tempId;
             payload.sisaHutang = payload.hutangAwal;
             payload.status = "Belum Lunas";
-            state.hutang.push(payload);
+            state.hutang.unshift(payload);
 
             const res = await api.addHutang(payload);
             if (res.status === 'success' && res.id) {
@@ -742,7 +748,7 @@ window.submitBayarHutang = async(e) => {
             if (newSisa <= 0) state.hutang[idx].status = "Lunas";
 
             // Also optimistic add to keuangan
-            state.keuangan.push({
+            state.keuangan.unshift({
                 id: 'temp-k-' + Date.now(),
                 jenis: 'Pemasukan',
                 nominal: payAmount,
@@ -789,7 +795,13 @@ function renderHistoriHutang() {
     }
 
     // Sort Waktu
-    filtered.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+    filtered.sort((a, b) => {
+        const diff = new Date(b.tanggal) - new Date(a.tanggal);
+        if (diff !== 0) return diff;
+        const timeA = a.waktu || '00:00';
+        const timeB = b.waktu || '00:00';
+        return timeB.localeCompare(timeA);
+    }); // Terbaru by default
     if (filterWaktu === 'terlama') {
         filtered.reverse();
     }
