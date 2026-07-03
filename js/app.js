@@ -215,8 +215,8 @@ async function loadData() {
                 }
                 return item;
             });
-            state.keuangan = fixDate(res.keuangan || []);
-            state.hutang = fixDate(res.hutang || []);
+            state.keuangan = fixDate(res.keuangan || []).reverse();
+            state.hutang = fixDate(res.hutang || []).reverse();
         } else {
             console.warn(res.message);
             // Fallback to empty if failed
@@ -482,10 +482,10 @@ function renderHistoriKeuangan() {
 
     // Sort Waktu
     filtered.sort((a, b) => {
-        const diff = new Date(b.tanggal) - new Date(a.tanggal);
-        if (diff !== 0) return diff;
-        const timeA = a.waktu || '00:00';
-        const timeB = b.waktu || '00:00';
+        let dateDiff = new Date(b.tanggal) - new Date(a.tanggal);
+        if (dateDiff !== 0) return dateDiff;
+        let timeA = a.waktu || '';
+        let timeB = b.waktu || '';
         return timeB.localeCompare(timeA);
     }); // Terbaru by default
     if (filterWaktu === 'terlama') {
@@ -796,12 +796,12 @@ function renderHistoriHutang() {
 
     // Sort Waktu
     filtered.sort((a, b) => {
-        const diff = new Date(b.tanggal) - new Date(a.tanggal);
-        if (diff !== 0) return diff;
-        const timeA = a.waktu || '00:00';
-        const timeB = b.waktu || '00:00';
+        let dateDiff = new Date(b.tanggal) - new Date(a.tanggal);
+        if (dateDiff !== 0) return dateDiff;
+        let timeA = a.waktu || '';
+        let timeB = b.waktu || '';
         return timeB.localeCompare(timeA);
-    }); // Terbaru by default
+    });
     if (filterWaktu === 'terlama') {
         filtered.reverse();
     }
