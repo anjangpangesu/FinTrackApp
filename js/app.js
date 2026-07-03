@@ -215,8 +215,8 @@ async function loadData() {
                 }
                 return item;
             });
-            state.keuangan = fixDate(res.keuangan || []);
-            state.hutang = fixDate(res.hutang || []);
+            state.keuangan = fixDate(res.keuangan || []).reverse();
+            state.hutang = fixDate(res.hutang || []).reverse();
         } else {
             console.warn(res.message);
             // Fallback to empty if failed
@@ -385,7 +385,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
             // optimistic update
             const tempId = 'temp-' + Date.now();
             payload.id = tempId;
-            state.keuangan.push(payload);
+            state.keuangan.unshift(payload);
 
             const res = await api.addKeuangan(payload);
             if (res.status === 'success' && res.id) {
@@ -631,7 +631,7 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
             payload.id = tempId;
             payload.sisaHutang = payload.hutangAwal;
             payload.status = "Belum Lunas";
-            state.hutang.push(payload);
+            state.hutang.unshift(payload);
 
             const res = await api.addHutang(payload);
             if (res.status === 'success' && res.id) {
@@ -742,7 +742,7 @@ window.submitBayarHutang = async(e) => {
             if (newSisa <= 0) state.hutang[idx].status = "Lunas";
 
             // Also optimistic add to keuangan
-            state.keuangan.push({
+            state.keuangan.unshift({
                 id: 'temp-k-' + Date.now(),
                 jenis: 'Pemasukan',
                 nominal: payAmount,
