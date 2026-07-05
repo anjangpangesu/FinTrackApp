@@ -263,11 +263,20 @@ function calculateBalances() {
             if (k.metode === 'Tunai') saldoTunai += nom;
             else saldoNonTunai += nom;
             if (isThisMonth) pemasukanBulan += nom;
-        } else {
+        } else if (k.jenis === 'Pengeluaran') {
             totalPengeluaran += nom;
             if (k.metode === 'Tunai') saldoTunai -= nom;
             else saldoNonTunai -= nom;
             if (isThisMonth) pengeluaranBulan += nom;
+        } else if (k.jenis === 'Transfer') {
+            // Transfer does not affect total Pemasukan / Pengeluaran
+            if (k.kategori === 'Tunai ke Non Tunai') {
+                saldoTunai -= nom;
+                saldoNonTunai += nom;
+            } else if (k.kategori === 'Non Tunai ke Tunai') {
+                saldoNonTunai -= nom;
+                saldoTunai += nom;
+            }
         }
     });
 
@@ -292,13 +301,18 @@ function calculateBalances() {
         // Yes, "Total yang minjam", meaning people borrowing from us.
         // Therefore, we lent money -> our cash decreases.
         // When they pay (sisa decreases), the payment should increase our balance.
-        // BUT wait, in payHutang() we already add a "Pemasukan" to Keuangan.
-        // So payments are already counted in totalPemasukan!
-        // This means we only need to deduct the INITIAL hutang from our balance here,
-        // because the payment is recorded in Keuangan as income.
+        // Cek apakah ada record pengeluaran terkait pemberian hutang ini di Keuangan
+        // Agar tidak double deduction, kita hanya kurangi jika tidak ada record Pengeluaran.
+        const hasKeuanganRecord = state.keuangan.some(k => 
+            k.jenis === 'Pengeluaran' && 
+            k.kategori === ('Pemberian Hutang: ' + h.nama) &&
+            parseFloat(k.nominal) === awal
+        );
 
-        if (h.metode === 'Tunai') saldoTunai -= awal;
-        else saldoNonTunai -= awal;
+        if (!hasKeuanganRecord) {
+            if (h.metode === 'Tunai') saldoTunai -= awal;
+            else saldoNonTunai -= awal;
+        }
 
         totalDiHutangin += sisa; // Currently active debt
         uniqOrang.add(h.nama);
@@ -337,17 +351,33 @@ function updateKategoriOptions() {
     const select = document.getElementById('fk-kategori');
     select.innerHTML = '';
 
-    state.categories[jenis].forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        select.appendChild(opt);
-    });
+    const metodeContainer = document.getElementById('fk-metode-container');
+
+    if (jenis === 'Transfer') {
+        metodeContainer.classList.add('hidden');
+        const opt1 = document.createElement('option');
+        opt1.value = 'Tunai ke Non Tunai';
+        opt1.textContent = 'Tunai ke Non Tunai (Setor Tunai)';
+        select.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = 'Non Tunai ke Tunai';
+        opt2.textContent = 'Non Tunai ke Tunai (Tarik Tunai)';
+        select.appendChild(opt2);
+    } else {
+        metodeContainer.classList.remove('hidden');
+        state.categories[jenis].forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            select.appendChild(opt);
+        });
+    }
 
     // Update filter dropdown as well
     const filterSelect = document.getElementById('filter-k-kategori');
     filterSelect.innerHTML = '<option value="semua">Semua Kategori</option>';
-    const allCats = [...state.categories.Pemasukan, ...state.categories.Pengeluaran];
+    const allCats = [...state.categories.Pemasukan, ...state.categories.Pengeluaran, 'Tunai ke Non Tunai', 'Non Tunai ke Tunai'];
     // get unique
     [...new Set(allCats)].forEach(cat => {
         const opt = document.createElement('option');
@@ -361,10 +391,11 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
     e.preventDefault();
 
     const id = document.getElementById('fk-id').value;
+    const jenis = document.querySelector('input[name="fk-jenis"]:checked').value;
     const payload = {
-        jenis: document.querySelector('input[name="fk-jenis"]:checked').value,
+        jenis: jenis,
         nominal: parseFloat(document.getElementById('fk-nominal').value),
-        metode: document.getElementById('fk-metode').value,
+        metode: jenis === 'Transfer' ? 'Mutasi' : document.getElementById('fk-metode').value,
         kategori: document.getElementById('fk-kategori').value,
         keterangan: document.getElementById('fk-keterangan').value,
         tanggal: document.getElementById('fk-tanggal').value,
@@ -424,7 +455,9 @@ window.editKeuangan = (id) => {
     updateKategoriOptions();
 
     document.getElementById('fk-nominal').value = item.nominal;
-    document.getElementById('fk-metode').value = item.metode;
+    if (item.jenis !== 'Transfer') {
+        document.getElementById('fk-metode').value = item.metode;
+    }
     document.getElementById('fk-kategori').value = item.kategori;
     document.getElementById('fk-keterangan').value = item.keterangan || '';
     document.getElementById('fk-tanggal').value = item.tanggal;
@@ -493,12 +526,24 @@ function renderHistoriKeuangan() {
 
     filtered.forEach(k => {
         const isMasuk = k.jenis === 'Pemasukan';
-        const colorClass = isMasuk ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-400' : 'text-rose-600 bg-rose-100 dark:bg-rose-900/40 dark:text-rose-400';
-        const icon = isMasuk ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
-        const sign = isMasuk ? '+' : '-';
+        const isTransfer = k.jenis === 'Transfer';
+        
+        let colorClass = 'text-blue-600 bg-blue-100 dark:bg-blue-900/40 dark:text-blue-400';
+        let icon = 'fa-right-left';
+        let sign = '';
+        let shadowColor = 'blue';
+        let borderColor = 'border-l-blue-500';
+        let textNominalColor = 'text-blue-600 dark:text-blue-400';
 
-        const shadowColor = isMasuk ? 'emerald' : 'rose';
-        const borderColor = isMasuk ? 'border-l-emerald-500' : 'border-l-rose-500';
+        if (!isTransfer) {
+            colorClass = isMasuk ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-400' : 'text-rose-600 bg-rose-100 dark:bg-rose-900/40 dark:text-rose-400';
+            icon = isMasuk ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+            sign = isMasuk ? '+' : '-';
+            shadowColor = isMasuk ? 'emerald' : 'rose';
+            borderColor = isMasuk ? 'border-l-emerald-500' : 'border-l-rose-500';
+            textNominalColor = isMasuk ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
+        }
+
         const displayTanggal = k.tanggal ? k.tanggal.split('T')[0] : '';
 
         const html = `
@@ -517,7 +562,7 @@ function renderHistoriKeuangan() {
                         </div>
                     </div>
                     <div class="flex items-center justify-between md:flex-col md:items-end gap-2 mt-2 md:mt-0">
-                        <div class="font-bold ${isMasuk ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                        <div class="font-bold ${textNominalColor}">
                             ${sign}Rp ${formatRibuan(k.nominal)}
                         </div>
                         <div class="flex gap-2">
@@ -632,6 +677,18 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
             payload.sisaHutang = payload.hutangAwal;
             payload.status = "Belum Lunas";
             state.hutang.unshift(payload);
+            
+            // Optimistic update Keuangan as well
+            state.keuangan.unshift({
+                id: 'temp-k-' + Date.now(),
+                jenis: 'Pengeluaran',
+                nominal: payload.hutangAwal,
+                metode: payload.metode,
+                kategori: 'Pemberian Hutang: ' + payload.nama,
+                keterangan: payload.keterangan || 'Pemberian hutang otomatis',
+                tanggal: payload.tanggal,
+                waktu: payload.waktu
+            });
 
             const res = await api.addHutang(payload);
             if (res.status === 'success' && res.id) {
