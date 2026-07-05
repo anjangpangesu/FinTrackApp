@@ -737,7 +737,11 @@ window.deleteHutang = async(id) => {
     showConfirm("Yakin ingin menghapus data ini?", async() => {
         showLoading(true);
         try {
-            state.hutang = state.hutang.filter(h => h.id !== id);
+            const hutangToDelete = state.hutang.find(h => h.id === id);
+            if (hutangToDelete) {
+                state.hutang = state.hutang.filter(h => h.id !== id);
+            }
+
             await api.deleteHutang(id);
             showToast('Berhasil', 'Data berhasil dihapus');
             updateUI();
