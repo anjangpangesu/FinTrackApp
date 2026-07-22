@@ -188,13 +188,13 @@ function switchTab(tab) {
         tHutang.classList.add('hidden');
 
         nKeuangan.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all font-bold text-white bg-primary shadow-lg shadow-primary/30 transform scale-105 border border-primary';
-        nHutang.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
+        nHutang.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all text-blue-950 dark:text-blue-50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
     } else {
         tKeuangan.classList.add('hidden');
         tHutang.classList.remove('hidden');
 
         nHutang.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all font-bold text-white bg-primary shadow-lg shadow-primary/30 transform scale-105 border border-primary';
-        nKeuangan.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
+        nKeuangan.className = 'flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start py-2 md:py-3 md:px-4 rounded-xl transition-all text-blue-950 dark:text-blue-50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
     }
 }
 
@@ -212,6 +212,15 @@ async function loadData() {
                     const month = String(d.getMonth() + 1).padStart(2, '0');
                     const day = String(d.getDate()).padStart(2, '0');
                     item.tanggal = `${year}-${month}-${day}`;
+                }
+                if (item.waktu && item.waktu.includes('T')) {
+                    const d = new Date(item.waktu);
+                    if (!isNaN(d.getTime())) {
+                        const h = String(d.getHours()).padStart(2, '0');
+                        const m = String(d.getMinutes()).padStart(2, '0');
+                        const s = String(d.getSeconds()).padStart(2, '0');
+                        item.waktu = `${h}:${m}:${s}`;
+                    }
                 }
                 return item;
             });
@@ -242,9 +251,6 @@ function calculateBalances() {
     let totalPemasukan = 0;
     let totalPengeluaran = 0;
 
-    let saldoTunai = 0;
-    let saldoNonTunai = 0;
-
     let pemasukanBulan = 0;
     let pengeluaranBulan = 0;
 
@@ -260,25 +266,14 @@ function calculateBalances() {
 
         if (k.jenis === 'Pemasukan') {
             totalPemasukan += nom;
-            if (k.metode === 'Tunai') saldoTunai += nom;
-            else saldoNonTunai += nom;
             if (isThisMonth) pemasukanBulan += nom;
         } else if (k.jenis === 'Pengeluaran') {
             totalPengeluaran += nom;
-            if (k.metode === 'Tunai') saldoTunai -= nom;
-            else saldoNonTunai -= nom;
             if (isThisMonth) pengeluaranBulan += nom;
-        } else if (k.jenis === 'Transfer') {
-            // Transfer does not affect total Pemasukan / Pengeluaran
-            if (k.kategori === 'Tunai ke Non Tunai') {
-                saldoTunai -= nom;
-                saldoNonTunai += nom;
-            } else if (k.kategori === 'Non Tunai ke Tunai') {
-                saldoNonTunai -= nom;
-                saldoTunai += nom;
-            }
         }
     });
+
+    let saldoTerkini = totalPemasukan - totalPengeluaran;
 
     // 2. Process Hutang (Mengurangi Saldo saat kita meminjamkan)
     let totalDiHutangin = 0;
@@ -310,8 +305,7 @@ function calculateBalances() {
         );
 
         if (!hasKeuanganRecord) {
-            if (h.metode === 'Tunai') saldoTunai -= awal;
-            else saldoNonTunai -= awal;
+            saldoTerkini -= awal;
         }
 
         totalDiHutangin += sisa; // Currently active debt
@@ -322,12 +316,9 @@ function calculateBalances() {
     totalOrang = uniqOrang.size;
     totalBelumLunas = uniqBelumLunas.size;
 
-    const saldoTerkini = saldoTunai + saldoNonTunai;
-
     // Update DOM
-    document.getElementById('k-saldo-terkini').textContent = 'Rp ' + formatRibuan(saldoTerkini);
-    document.getElementById('k-saldo-tunai').textContent = 'Rp ' + formatRibuan(saldoTunai);
-    document.getElementById('k-saldo-nontunai').textContent = 'Rp ' + formatRibuan(saldoNonTunai);
+    const elSaldoTerkini = document.getElementById('k-saldo-terkini');
+    if (elSaldoTerkini) elSaldoTerkini.textContent = 'Rp ' + formatRibuan(saldoTerkini);
     document.getElementById('k-masuk-bulan').textContent = 'Rp ' + formatRibuan(pemasukanBulan);
     document.getElementById('k-keluar-bulan').textContent = 'Rp ' + formatRibuan(pengeluaranBulan);
 
@@ -347,37 +338,25 @@ function calculateBalances() {
 
 // ==== KEUANGAN LOGIC ====
 function updateKategoriOptions() {
-    const jenis = document.querySelector('input[name="fk-jenis"]:checked').value;
+    const jenisInput = document.querySelector('input[name="fk-jenis"]:checked');
+    if (!jenisInput) return;
+    const jenis = jenisInput.value;
     const select = document.getElementById('fk-kategori');
+    if (!select) return;
     select.innerHTML = '';
 
-    const metodeContainer = document.getElementById('fk-metode-container');
-
-    if (jenis === 'Transfer') {
-        metodeContainer.classList.add('hidden');
-        const opt1 = document.createElement('option');
-        opt1.value = 'Tunai ke Non Tunai';
-        opt1.textContent = 'Tunai ke Non Tunai (Setor Tunai)';
-        select.appendChild(opt1);
-
-        const opt2 = document.createElement('option');
-        opt2.value = 'Non Tunai ke Tunai';
-        opt2.textContent = 'Non Tunai ke Tunai (Tarik Tunai)';
-        select.appendChild(opt2);
-    } else {
-        metodeContainer.classList.remove('hidden');
-        state.categories[jenis].forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat;
-            opt.textContent = cat;
-            select.appendChild(opt);
-        });
-    }
+    state.categories[jenis].forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+    });
 
     // Update filter dropdown as well
     const filterSelect = document.getElementById('filter-k-kategori');
+    if (!filterSelect) return;
     filterSelect.innerHTML = '<option value="semua">Semua Kategori</option>';
-    const allCats = [...state.categories.Pemasukan, ...state.categories.Pengeluaran, 'Tunai ke Non Tunai', 'Non Tunai ke Tunai'];
+    const allCats = [...state.categories.Pemasukan, ...state.categories.Pengeluaran];
     // get unique
     [...new Set(allCats)].forEach(cat => {
         const opt = document.createElement('option');
@@ -395,7 +374,6 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
     const payload = {
         jenis: jenis,
         nominal: parseFloat(document.getElementById('fk-nominal').value),
-        metode: jenis === 'Transfer' ? 'Mutasi' : document.getElementById('fk-metode').value,
         kategori: document.getElementById('fk-kategori').value,
         keterangan: document.getElementById('fk-keterangan').value,
         tanggal: document.getElementById('fk-tanggal').value,
@@ -428,6 +406,7 @@ document.getElementById('form-keuangan').addEventListener('submit', async(e) => 
         }
         resetFormKeuangan();
         updateUI();
+        closeModalInputKeuangan();
     } catch (error) {
         showToast('Error', 'Gagal menyimpan data', true);
     }
@@ -443,7 +422,8 @@ function resetFormKeuangan() {
     updateKategoriOptions();
 
     document.getElementById('fk-submit-btn').innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Tambah Keuangan';
-    document.getElementById('fk-cancel-btn').classList.add('hidden');
+    const cancelBtn = document.getElementById('fk-cancel-btn');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
 }
 
 window.editKeuangan = (id) => {
@@ -455,18 +435,24 @@ window.editKeuangan = (id) => {
     updateKategoriOptions();
 
     document.getElementById('fk-nominal').value = item.nominal;
-    if (item.jenis !== 'Transfer') {
-        document.getElementById('fk-metode').value = item.metode;
-    }
     document.getElementById('fk-kategori').value = item.kategori;
     document.getElementById('fk-keterangan').value = item.keterangan || '';
     document.getElementById('fk-tanggal').value = item.tanggal;
 
     document.getElementById('fk-submit-btn').innerHTML = '<i class="fa-solid fa-save mr-1"></i> Simpan Perubahan';
-    document.getElementById('fk-cancel-btn').classList.remove('hidden');
+    
+    openModalInputKeuangan();
+}
 
-    // Scroll to form
-    document.getElementById('form-keuangan').scrollIntoView({ behavior: 'smooth' });
+window.openModalInputKeuangan = () => {
+    document.getElementById('modal-input-keuangan').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+window.closeModalInputKeuangan = () => {
+    document.getElementById('modal-input-keuangan').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    resetFormKeuangan();
 }
 
 window.deleteKeuangan = async(id) => {
@@ -520,13 +506,12 @@ function renderHistoriKeuangan() {
     }
 
     if (filtered.length === 0) {
-        list.innerHTML = `<div class="text-center text-slate-400 py-10">Tidak ada data ditemukan.</div>`;
+        list.innerHTML = `<div class="text-center text-blue-950 py-10">Tidak ada data ditemukan.</div>`;
         return;
     }
 
     filtered.forEach(k => {
         const isMasuk = k.jenis === 'Pemasukan';
-        const isTransfer = k.jenis === 'Transfer';
         
         let colorClass = 'text-blue-600 bg-blue-100 dark:bg-blue-900/40 dark:text-blue-400';
         let icon = 'fa-right-left';
@@ -535,14 +520,12 @@ function renderHistoriKeuangan() {
         let borderColor = 'border-l-blue-500';
         let textNominalColor = 'text-blue-600 dark:text-blue-400';
 
-        if (!isTransfer) {
-            colorClass = isMasuk ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-400' : 'text-rose-600 bg-rose-100 dark:bg-rose-900/40 dark:text-rose-400';
-            icon = isMasuk ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
-            sign = isMasuk ? '+' : '-';
-            shadowColor = isMasuk ? 'emerald' : 'rose';
-            borderColor = isMasuk ? 'border-l-emerald-500' : 'border-l-rose-500';
-            textNominalColor = isMasuk ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
-        }
+        colorClass = isMasuk ? 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-400' : 'text-rose-600 bg-rose-100 dark:bg-rose-900/40 dark:text-rose-400';
+        icon = isMasuk ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+        sign = isMasuk ? '+' : '-';
+        shadowColor = isMasuk ? 'emerald' : 'rose';
+        borderColor = isMasuk ? 'border-l-emerald-500' : 'border-l-rose-500';
+        textNominalColor = isMasuk ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400';
 
         const displayTanggal = k.tanggal ? k.tanggal.split('T')[0] : '';
 
@@ -556,9 +539,9 @@ function renderHistoriKeuangan() {
                             <span class="text-xs font-bold uppercase tracking-wider">${k.jenis}</span>
                         </div>
                         <div>
-                            <h5 class="font-bold text-slate-800 dark:text-white">${k.kategori}</h5>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">${displayTanggal} ${k.waktu ? '• ' + k.waktu : ''} • ${k.metode}</p>
-                            ${k.keterangan ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 italic">"${k.keterangan}"</p>` : ''}
+                            <h5 class="font-bold text-blue-950 dark:text-blue-50">${k.kategori}</h5>
+                            <p class="text-xs text-blue-950 dark:text-blue-50">${displayTanggal} ${k.waktu ? '• ' + k.waktu : ''}</p>
+                            ${k.keterangan ? `<p class="text-xs text-blue-950 dark:text-blue-50 mt-1 italic">"${k.keterangan}"</p>` : ''}
                         </div>
                     </div>
                     <div class="flex items-center justify-between md:flex-col md:items-end gap-2 mt-2 md:mt-0">
@@ -566,7 +549,7 @@ function renderHistoriKeuangan() {
                             ${sign}Rp ${formatRibuan(k.nominal)}
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editKeuangan('${k.id}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded transition-colors dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="editKeuangan('${k.id}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-blue-950 px-2 py-1 rounded transition-colors dark:bg-slate-700 dark:text-blue-50 dark:hover:bg-slate-600"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteKeuangan('${k.id}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-500 px-2 py-1 rounded transition-colors dark:bg-rose-900/30 dark:hover:bg-rose-900/50"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -646,7 +629,6 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
         nominal: parseFloat(document.getElementById('fh-nominal').value),
         hutangAwal: parseFloat(document.getElementById('fh-nominal').value), // Initial is same
         keterangan: document.getElementById('fh-keterangan').value,
-        metode: document.getElementById('fh-metode').value,
         tanggal: document.getElementById('fh-tanggal').value,
         waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
     };
@@ -683,7 +665,6 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
                 id: 'temp-k-' + Date.now(),
                 jenis: 'Pengeluaran',
                 nominal: payload.hutangAwal,
-                metode: payload.metode,
                 kategori: 'Pemberian Hutang: ' + payload.nama,
                 keterangan: payload.keterangan || 'Pemberian hutang otomatis',
                 tanggal: payload.tanggal,
@@ -699,6 +680,7 @@ document.getElementById('form-hutang').addEventListener('submit', async(e) => {
         }
         resetFormHutang();
         updateUI();
+        closeModalInputHutang();
     } catch (error) {
         showToast('Error', 'Gagal menyimpan data', true);
     }
@@ -713,7 +695,8 @@ function resetFormHutang() {
     document.getElementById('fh-tanggal').value = new Date().toISOString().split('T')[0];
 
     document.getElementById('fh-submit-btn').innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Tambah Hutang';
-    document.getElementById('fh-cancel-btn').classList.add('hidden');
+    const cancelBtn = document.getElementById('fh-cancel-btn');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
 }
 
 window.editHutang = (id) => {
@@ -724,13 +707,22 @@ window.editHutang = (id) => {
     document.getElementById('fh-nama').value = item.nama;
     document.getElementById('fh-nominal').value = item.hutangAwal;
     document.getElementById('fh-keterangan').value = item.keterangan;
-    document.getElementById('fh-metode').value = item.metode;
     document.getElementById('fh-tanggal').value = item.tanggal;
 
     document.getElementById('fh-submit-btn').innerHTML = '<i class="fa-solid fa-save mr-1"></i> Simpan Perubahan';
-    document.getElementById('fh-cancel-btn').classList.remove('hidden');
+    
+    openModalInputHutang();
+}
 
-    document.getElementById('form-hutang').scrollIntoView({ behavior: 'smooth' });
+window.openModalInputHutang = () => {
+    document.getElementById('modal-input-hutang').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+}
+
+window.closeModalInputHutang = () => {
+    document.getElementById('modal-input-hutang').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    resetFormHutang();
 }
 
 window.deleteHutang = async(id) => {
@@ -786,7 +778,6 @@ window.submitBayarHutang = async(e) => {
     const payload = {
         id: id,
         payAmount: payAmount,
-        metode: document.getElementById('mb-metode').value,
         tanggal: document.getElementById('mb-tanggal').value,
         waktu: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
     };
@@ -807,7 +798,6 @@ window.submitBayarHutang = async(e) => {
                 id: 'temp-k-' + Date.now(),
                 jenis: 'Pemasukan',
                 nominal: payAmount,
-                metode: payload.metode,
                 kategori: 'Pembayaran Hutang: ' + state.hutang[idx].nama,
                 keterangan: 'Pembayaran hutang otomatis',
                 tanggal: payload.tanggal,
@@ -856,7 +846,7 @@ function renderHistoriHutang() {
     }
 
     if (filtered.length === 0) {
-        list.innerHTML = `<div class="text-center text-slate-400 py-10">Tidak ada data ditemukan.</div>`;
+        list.innerHTML = `<div class="text-center text-blue-950 py-10">Tidak ada data ditemukan.</div>`;
         return;
     }
 
@@ -877,18 +867,18 @@ function renderHistoriHutang() {
                             <i class="fa-solid fa-user"></i>
                         </div>
                         <div>
-                            <h5 class="font-bold text-slate-800 dark:text-white text-lg">${h.nama}</h5>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">${displayTanggal} • ${h.keterangan}</p>
+                            <h5 class="font-bold text-blue-950 dark:text-blue-50 text-lg">${h.nama}</h5>
+                            <p class="text-xs text-blue-950 dark:text-blue-50">${displayTanggal} • ${h.keterangan}</p>
                             <div class="mt-1 text-sm">
-                                <span class="text-slate-500 dark:text-slate-400">Hutang Awal: </span>
-                                <span class="font-semibold text-slate-700 dark:text-slate-300">Rp ${formatRibuan(h.hutangAwal)}</span>
+                                <span class="text-blue-950 dark:text-blue-50">Hutang Awal: </span>
+                                <span class="font-semibold text-blue-950 dark:text-blue-50">Rp ${formatRibuan(h.hutangAwal)}</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="flex flex-col items-start md:items-end justify-center gap-3">
                         <div class="text-left md:text-right w-full bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                            <span class="text-xs text-slate-500 dark:text-slate-400 block">Sisa Hutang:</span>
+                            <span class="text-xs text-blue-950 dark:text-blue-50 block">Sisa Hutang:</span>
                             <span class="font-bold text-lg ${isLunas ? 'text-emerald-500 dark:text-emerald-400' : 'text-blue-500 dark:text-blue-400'}">
                                 Rp ${formatRibuan(h.sisaHutang)}
                             </span>
@@ -896,7 +886,7 @@ function renderHistoriHutang() {
                         
                         <div class="flex gap-2 w-full md:w-auto">
                             ${!isLunas ? `<button onclick="openModalBayar('${h.id}')" class="flex-1 md:flex-none text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg transition-colors font-medium"><i class="fa-solid fa-money-bill-wave mr-1"></i> Bayar</button>` : ''}
-                            <button onclick="editHutang('${h.id}')" class="flex-1 md:flex-none text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg transition-colors font-medium dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="editHutang('${h.id}')" class="flex-1 md:flex-none text-xs bg-slate-100 hover:bg-slate-200 text-blue-950 px-3 py-1.5 rounded-lg transition-colors font-medium dark:bg-slate-700 dark:text-blue-50 dark:hover:bg-slate-600"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteHutang('${h.id}')" class="flex-1 md:flex-none text-xs bg-rose-50 hover:bg-rose-100 text-rose-500 px-3 py-1.5 rounded-lg transition-colors font-medium dark:bg-rose-900/30 dark:hover:bg-rose-900/50"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -1038,9 +1028,9 @@ window.downloadKeuangan = () => {
         pengeluaran: 'Rp ' + formatRibuan(tKeluar)
     };
 
-    const head = ["ID", "Tanggal", "Waktu", "Jenis", "Kategori", "Metode", "Nominal"];
+    const head = ["ID", "Tanggal", "Waktu", "Jenis", "Kategori", "Nominal"];
     const body = filtered.map(k => [
-        k.id, k.tanggal, k.waktu, k.jenis, k.kategori, k.metode, 'Rp ' + formatRibuan(k.nominal)
+        k.id, k.tanggal, k.waktu, k.jenis, k.kategori, 'Rp ' + formatRibuan(k.nominal)
     ]);
 
     let charts = [];
@@ -1077,9 +1067,9 @@ window.downloadHutang = () => {
         return;
     }
 
-    const head = ["ID", "Tanggal", "Nama", "Keterangan", "Metode", "Hutang Awal", "Sisa", "Status"];
+    const head = ["ID", "Tanggal", "Nama", "Keterangan", "Hutang Awal", "Sisa", "Status"];
     const body = filtered.map(h => [
-        h.id, h.tanggal, h.nama, h.keterangan, h.metode, 'Rp ' + formatRibuan(h.hutangAwal), 'Rp ' + formatRibuan(h.sisaHutang), h.status
+        h.id, h.tanggal, h.nama, h.keterangan, 'Rp ' + formatRibuan(h.hutangAwal), 'Rp ' + formatRibuan(h.sisaHutang), h.status
     ]);
 
     generatePDF({
